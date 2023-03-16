@@ -1,0 +1,6 @@
+.libros_containers {
+   width: 50%;
+   display: flex;
+   justify-items: center;
+   align-items: center;
+}

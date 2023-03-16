@@ -1,0 +1,1 @@
+export { default as TableBorrowedBooks } from './TableBorrowedBooks';

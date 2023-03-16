@@ -1,0 +1,23 @@
+.libros__grid {
+    display: grid;
+    gap: 4rem;
+    margin: 20px;
+
+}
+
+.libro__contenido {
+    max-width: 450px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+@media (min-width: 768px) { 
+    .libros__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (min-width: 1200px) { 
+    .libros__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

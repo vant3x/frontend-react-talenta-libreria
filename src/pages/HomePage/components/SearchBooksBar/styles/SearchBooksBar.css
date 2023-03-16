@@ -1,0 +1,15 @@
+.search__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 4rem;
+}
+
+.search__book-input {
+    width: 300px;
+    padding: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.30rem;
+}
+

@@ -1,0 +1,79 @@
+[class*="contenedor"] {
+    max-width: 120rem;
+    margin: 0 auto;
+    width: 95%;
+  }
+  
+  .header {
+    background-image: linear-gradient(to right, rgb(0 0 0 / .7), rgb(0 0 0 / .7)), url('./../../../../../assets//bg//bg.jpeg');
+    background-size: cover;
+    background-position: 50%;
+    padding: 5rem 0;
+    position: relative;
+  }
+  
+  .header__barra {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  @media (min-width: 768px) { 
+    .header__barra {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  
+  .header__logo {
+    width: 15rem;
+  }
+  
+  .navegacion {
+
+    margin-top: 5rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  @media (min-width: 768px) { 
+    .navegacion {
+      margin-top: 0;
+    }
+  }
+  
+  .navegacion ul {
+    gap: 2rem;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .navegacion__enlace {
+    color: #ffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: .5rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    transition-property: background-color;
+    transition-duration: .3s;
+    list-style: none;
+    cursor: pointer;
+    display: inline-block;
+  }
+  
+  .navegacion__enlace:hover {
+    background-color: #09f;
+  }
+
+
+.active {
+    background-color:#09f;
+    font-weight: bold;
+}
+
+.icon-margin {
+  margin-right: 10px;
+}
