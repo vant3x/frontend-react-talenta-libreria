@@ -58,6 +58,7 @@ const ListBooksPage: React.FC<ListBooksPageProps> = () => {
       <TableBooks
         data={allBooks}
         loading={loading}
+        getBooks={getBooks}
         handleSearch={handleInputChange}
       />
     </>

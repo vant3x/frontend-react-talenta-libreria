@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../../../components/shared/Loader/Loader';
+import axiosClient from '../../../../../config/axios';
 import { User } from '../../../../../interfaces/User.interface';
 import './styles/TableUsers.css';
 
@@ -10,11 +11,22 @@ export interface TableUsersProps {
 	data: User[];
 	handleSearch?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	loading: boolean;
+	getUsers: () => void;
 }
 
-const TableUsers : React.FC<TableUsersProps> = ({handleSearch, loading, data}) => {
+const TableUsers : React.FC<TableUsersProps> = ({handleSearch, loading, data, getUsers}) => {
 
 	const router = useNavigate();
+
+	const handleNewBorrowedBookUser = (userId: string | number, userInfo: User) => {
+		const selectedUserInfo = { userId, user: userInfo };
+		router(`/nuevo-prestamo/user/${userId}`, { state: { selectedUserInfo } })
+	  }
+
+	  const deleteUser = async (id: number | string) => {
+		await axiosClient.delete(`/api/users/${id}`);
+		getUsers();
+	}
 
 	return (
 		<>
@@ -46,7 +58,7 @@ const TableUsers : React.FC<TableUsersProps> = ({handleSearch, loading, data}) =
 					<td>Nombre completo</td>
 					<td>Email</td>
 					<td>Teléfono</td>
-					<td>Libros prestados</td>
+					{/*	<td>Libros prestados</td> */}
 				  </tr>
 				</thead>
 				<tbody>
@@ -57,26 +69,27 @@ const TableUsers : React.FC<TableUsersProps> = ({handleSearch, loading, data}) =
 					  <td>{item.name} {item.lastname}</td>
 					  <td>{item.email}</td>
 					  <td>{item.phone}</td>
-					  <td className="border">Si</td>
+					 {/*  <td className="border">Si</td> */}
 					  <td>
 						<button
-						  onClick={() => router(`/nuevo-prestamo/${item.id}`)}
+						className="table__buttons-borrowed_book"
+						  onClick={() => handleNewBorrowedBookUser(item.id, item)}
 						>
 						 Prestar libro        
 						</button>
 					  </td>
 					  <td>
 						<button
+						className="table__buttons-edit"
 						  onClick={() => router(`/actualizar-usuario/${item.id}`)}
 						>
-						  Editar           <FontAwesomeIcon
+						   <FontAwesomeIcon
                           icon={faPenToSquare}
-                          className="icon-margin"
                         />
 						</button>
 					  </td>
 					  <td>
-						<button className="table__buttons-delete">Eliminar <FontAwesomeIcon
+						<button onClick={()=> deleteUser(item.id)}  className="table__buttons-delete">Eliminar <FontAwesomeIcon
                           icon={faTrash}
                           className="icon-margin"
                         /></button>

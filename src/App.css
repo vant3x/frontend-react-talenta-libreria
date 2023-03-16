@@ -71,6 +71,69 @@
 
 }
 
+.table__buttons-edit  {
+    background: rgb(83, 155, 226);
+    color:#fff;
+    border: none;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition:  all 0.5s;
+    border-radius: 0.50rem;
+    text-align: center;
+    display: flex;
+}
+
+.table__buttons-edit:hover {
+    background: rgb(46, 125, 203);
+}
+
+.table__butons-icon {
+  text-align: center;
+
+}
+
+.table__buttons-view  {
+    background: rgb(142, 142, 142);
+    color:#fff;
+    border: none;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition:  all 0.5s;
+    border-radius: 0.50rem;
+    text-align: center;
+    display: flex;
+}
+
+.table__buttons-borrowed_book  {
+    background: #09f;
+    color:#fff;
+    border: none;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition:  all 0.5s;
+    border-radius: 0.50rem;
+    text-align: center;
+    display: flex;
+}
+
+.table__buttons-return-book  {
+    background: #fec030;
+    color:#fff;
+    border: none;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition:  all 0.5s;
+    border-radius: 0.50rem;
+    text-align: center;
+    display: flex;
+}
+
+.titulos {
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: 900;
+    color: #09f;
+}
 
 .center-loader {
     text-align: center;

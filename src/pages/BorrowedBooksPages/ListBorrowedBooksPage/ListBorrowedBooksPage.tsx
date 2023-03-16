@@ -14,8 +14,7 @@ const ListBorrowedBooksPage: React.FC<ListBorrowedBooksPageProps> = () => {
 	const [allBorrowedBooks, setAllBorrowedBooks] = useState<BorrowedBook[]>([]);
 
 	const router = useNavigate();
-
-
+	
 	const getBorrowedBooks = async () => {
 		try {
 		  setLoading(true);
@@ -46,7 +45,7 @@ const ListBorrowedBooksPage: React.FC<ListBorrowedBooksPageProps> = () => {
       >      <FontAwesomeIcon icon={faUserPlus} className="icon-margin" />   Gestionar prestamo        
 
       </button>
-	  <TableBorrowedBooks data={allBorrowedBooks} loading={loading} />
+	  <TableBorrowedBooks data={allBorrowedBooks} loading={loading} getBorrowedBooks={getBorrowedBooks}  />
     </div>
   );
 };

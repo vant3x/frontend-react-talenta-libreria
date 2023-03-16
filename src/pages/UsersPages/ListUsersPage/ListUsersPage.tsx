@@ -45,7 +45,7 @@ const ListUsersPage: React.FC<ListUsersPageProps> = () => {
       <FontAwesomeIcon icon={faUserPlus} className="icon-margin" />   Registrar un usuario         
 
       </button>
-      <TableUsers data={allUsers} loading={loading} />
+      <TableUsers data={allUsers} loading={loading} getUsers={getUsers} />
     </div>
   );
 };

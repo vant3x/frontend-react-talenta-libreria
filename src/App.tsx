@@ -46,6 +46,8 @@ function App() {
             <Route path="/actualizar-usuario/:id" element={<EditUserPage   />} />
             <Route path="/prestamos" element={<ListBorrowedBooksPage />} />
             <Route path="/nuevo-prestamo" element={<NewBorrowedBookPage />} />
+            <Route path="/nuevo-prestamo/user/:user" element={<NewBorrowedBookPage />} />
+            <Route path="/nuevo-prestamo/book/:book" element={<NewBorrowedBookPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Layout>

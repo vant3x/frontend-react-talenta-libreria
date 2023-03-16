@@ -10,11 +10,21 @@ import axiosClient from "../../../../../config/axios";
 import { User } from "../../../../../interfaces/User.interface";
 import { BookDetail } from "../../../../../interfaces/BookDetail.interface";
 import { BorrowedBook } from "../../../../../interfaces/BorrowedBooks.interface";
+import { useLocation, useNavigate } from "react-router-dom";
 export interface NewBorrowedBookFormProps {}
 
 const NewBorrowedBookForm: React.FC<NewBorrowedBookFormProps> = () => {
   const AppContext = useContext<AppContextType>(appContext);
   const { newBorrowedBook, borrowedBookMessage } = AppContext;
+
+  const location = useLocation();
+
+  const router = useNavigate();
+  const navigateState = location.state || {};
+  const selectedBookInfo = navigateState.selectedBookInfo;
+  console.log(selectedBookInfo);
+  const selectedUserInfo = navigateState.selectedUserInfo;
+  console.log(selectedUserInfo);
 
   const [loading, setLoading] = useState(false);
   const [cleanAlert, setCleanAlert] = useState(false);
@@ -25,15 +35,34 @@ const NewBorrowedBookForm: React.FC<NewBorrowedBookFormProps> = () => {
   const verifyBookAvailabilityAndUpdate = async (values: BorrowedBook) => {
     setLoading(true);
     const bookAvailability = await axiosClient.get(
-      `/api/borrowed-books/check-book-availability/${values.bookId}`
+      `/api/borrowed-books/check-book-availability/${
+        values.bookId ? values.bookId : selectedBookInfo?.bookId
+      }`
     );
 
     if (bookAvailability.data) {
-      newBorrowedBook(values);
-	  setBookAvailability(true);
-
+      if (selectedBookInfo && selectedBookInfo.book) {
+        const borrowedBookValues = {
+          ...values,
+          bookId: selectedBookInfo.bookId,
+        };
+        newBorrowedBook(borrowedBookValues);
+        setBookAvailability(true);
+        console.log(borrowedBookValues);
+      } else if (selectedUserInfo && selectedUserInfo.user) {
+        const userBorrowedBookValues = {
+          ...values,
+          userId: selectedUserInfo.userId,
+        };
+        newBorrowedBook(userBorrowedBookValues);
+        setBookAvailability(true);
+        console.log(userBorrowedBookValues);
+      } else {
+        newBorrowedBook(values);
+        setBookAvailability(true);
+      }
     } else {
-		setBookAvailability(false);
+      setBookAvailability(false);
     }
 
     setLoading(false);
@@ -47,10 +76,14 @@ const NewBorrowedBookForm: React.FC<NewBorrowedBookFormProps> = () => {
       returnDate: "",
     },
     validationSchema: Yup.object({
-      userId: Yup.string().required("El usuario es obligatorio"),
-      bookId: Yup.string().required("El libro es obligatorio"),
+      userId: selectedUserInfo?.user
+        ? Yup.string()
+        : Yup.string().required("El usuario es obligatorio"),
+      bookId: selectedBookInfo?.book
+        ? Yup.string()
+        : Yup.string().required("El libro es obligatorio"),
       borrowDate: Yup.date().required("La fecha de prestamo es obligatoria"),
-      returnDate: Yup.date().required("El número de telefono es obligatorio"),
+      returnDate: Yup.date().required("La fecha de devolución estimada es obligatoria"),
     }),
     onSubmit: async (values) => {
       verifyBookAvailabilityAndUpdate(values);
@@ -98,9 +131,9 @@ const NewBorrowedBookForm: React.FC<NewBorrowedBookFormProps> = () => {
         (borrowedBookMessage.status === 201 && !cleanAlert) ||
         (borrowedBookMessage.status === 200 && !cleanAlert)
       ) {
-        //router("/");
+        router("/");
       }
-    }, 6000);
+    }, 4000);
     return () => clearTimeout(timer);
   }, [borrowedBookMessage, bookAvailabilityState]);
 
@@ -116,7 +149,10 @@ const NewBorrowedBookForm: React.FC<NewBorrowedBookFormProps> = () => {
       ) : null}
 
       {!bookAvailabilityState && cleanAlert ? (
-        <Alert message="No se pudo registrar el prestamo por que el libro no está disponible :(" type="error" />
+        <Alert
+          message="No se pudo registrar el prestamo por que el libro no está disponible :("
+          type="error"
+        />
       ) : null}
 
       <form onSubmit={formik.handleSubmit} className="borrowed__book__form">
@@ -128,57 +164,100 @@ const NewBorrowedBookForm: React.FC<NewBorrowedBookFormProps> = () => {
         {!loading && (
           <div className="borrowed__book__form-container">
             <div className="borrowed__book__basic-info">
-              <label htmlFor="name" className="borrowed__book__label">
-                Nombre del usuario que va a realizar el prestamo: *
-              </label>
+              {selectedUserInfo?.user && (
+                <>
+                  <p> El usuario al que se le va a prestar el libro es: </p>
+                  <p>
+                    <span className="titulos">Nombre: </span>
+                    {selectedUserInfo.user.name}
+                    {selectedUserInfo.user.lastname}
+                  </p>
+                  <p>
+                    <span className="titulos">Email: </span>
+                    {selectedUserInfo.user.email}
+                  </p>
+                  <p>
+                    <span className="titulos">Teléfono: </span>
+                    {selectedUserInfo.user.phone}
+                  </p>
+                </>
+              )}
+              {!selectedUserInfo && (
+                <>
+                  <label htmlFor="name" className="borrowed__book__label">
+                    Nombre del usuario que va a realizar el prestamo: *
+                  </label>
 
-              <select
-                name="userId"
-                value={formik.values.userId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                autoComplete="name"
-                required
-                className="borrowed__book__input"
-              >
-                <option value="" disabled defaultValue="">
-                  Seleccione un usuario
-                </option>
+                  <select
+                    name="userId"
+                    value={formik.values.userId}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    autoComplete="name"
+                    required
+                    className="borrowed__book__input"
+                  >
+                    <option value="" disabled defaultValue="">
+                      Seleccione un usuario
+                    </option>
 
-                {allUsers.map((user) => (
-                  <option value={user.id} key={user.id}>
-                    {user.name} {user.lastname}{" "}
-                  </option>
-                ))}
-              </select>
+                    {allUsers.map((user) => (
+                      <option value={user.id} key={user.id}>
+                        {user.name} {user.lastname}{" "}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
 
-              {formik.touched.userId && formik.errors.userId ? (
+              {formik.touched.userId &&
+              formik.errors.userId &&
+              !selectedUserInfo ? (
                 <Alert message={formik.errors.userId} type="error" />
               ) : null}
-              <label htmlFor="bookId" className="borrowed__book__label">
-                Selecciona el libro que se va a prestar
-              </label>
-              <select
-                name="bookId"
-                value={formik.values.bookId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                autoComplete="name"
-                required
-                className="borrowed__book__input"
-              >
-                <option value="" disabled defaultValue="">
-                  Seleccione un libro
-                </option>
+              {selectedBookInfo?.book?.title && (
+                <>
+                  <p> El libro que vas a prestar es: </p>
+                  <p>
+                    <span className="titulos">Título: </span>{" "}
+                    {selectedBookInfo.book.title}{" "}
+                  </p>
+                  <p>
+                    <span className="titulos">Autor: </span>{" "}
+                    {selectedBookInfo.book.author}{" "}
+                  </p>
+                </>
+              )}
 
-                {allBooks.map((book) => (
-                  <option value={book.id} key={book.id}>
-                    {book.title} de {book.author}
-                  </option>
-                ))}
-              </select>
+              {!selectedBookInfo && (
+                <>
+                  <label htmlFor="bookId" className="borrowed__book__label">
+                    Selecciona el libro que se va a prestar
+                  </label>
+                  <select
+                    name="bookId"
+                    value={formik.values.bookId}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    autoComplete="name"
+                    required
+                    className="borrowed__book__input"
+                  >
+                    <option value="" disabled defaultValue="">
+                      Seleccione un libro
+                    </option>
 
-              {formik.touched.bookId && formik.errors.bookId ? (
+                    {allBooks.map((book) => (
+                      <option value={book.id} key={book.id}>
+                        {book.title} de {book.author}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+              {formik.touched.bookId &&
+              formik.errors.bookId &&
+              !selectedBookInfo ? (
                 <Alert message={formik.errors.bookId} type="error" />
               ) : null}
             </div>

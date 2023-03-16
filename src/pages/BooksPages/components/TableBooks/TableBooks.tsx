@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Loader } from "../../../../components/shared/Loader/Loader";
+import axiosClient from "../../../../config/axios";
 import { BookDetail } from "../../../../interfaces/BookDetail.interface";
 import { Tooltip } from "./../../../../components/shared/Tooltip";
 
@@ -16,14 +17,26 @@ export interface TableBooksProps {
   data: BookDetail[];
   handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   loading: boolean;
+  getBooks: () => void;
 }
 
 const TableBooks: React.FC<TableBooksProps> = ({
   data,
   loading,
   handleSearch,
+  getBooks
 }) => {
   const router = useNavigate();
+
+  const handleNewBorrowedBook = (bookId: string | number, bookInfo: BookDetail) => {
+    const selectedBookInfo = { bookId, book: bookInfo };
+    router(`/nuevo-prestamo/book/${bookId}`, { state: { selectedBookInfo } })
+  }
+
+  const deleteBook = async (id: number | string) => {
+		await axiosClient.delete(`/api/books/${id}`);
+		getBooks();
+	}
 
   return (
     <>
@@ -73,7 +86,8 @@ const TableBooks: React.FC<TableBooksProps> = ({
                     <td>{item.ISBN}</td>
                     <td>
                       <button
-                        onClick={() => router(`/nuevo-prestamo/${item.id}`)}
+                      className="table__buttons-borrowed_book"
+                        onClick={() => handleNewBorrowedBook(item.id, item)}
                       >
                         Prestar
                       </button>
@@ -81,11 +95,11 @@ const TableBooks: React.FC<TableBooksProps> = ({
                     <td>
                       <Tooltip text="Ver este libro">
                         <button
+                        className="table__buttons-view"
                           onClick={() => router(`/actualizar-libro/${item.id}`)}
                         >
                           <FontAwesomeIcon
                             icon={faEye}
-                            className="icon-margin"
                           />{" "}
                         </button>
                       </Tooltip>
@@ -93,22 +107,21 @@ const TableBooks: React.FC<TableBooksProps> = ({
                     <td>
                       <Tooltip text="Edita un libro">
                         <button
+                        className="table__buttons-edit"
                           onClick={() => router(`/actualizar-libro/${item.id}`)}
                         >
                           <FontAwesomeIcon
                             icon={faPenToSquare}
-                            className="icon-margin"
                           />
                         </button>
                       </Tooltip>
                     </td>
                     <td>
                       <Tooltip text="Elimina un libro">
-                        <button className="table__buttons-delete">
-                          {" "}
+                        <button className="table__buttons-delete" onClick={()=> deleteBook(item?.id)}>
+                      
                           <FontAwesomeIcon
                             icon={faTrash}
-                            className="icon-margin"
                           />
                         </button>
                       </Tooltip>

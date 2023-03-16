@@ -14,11 +14,13 @@ export interface TableBorrowedBooksProps {
   data: BorrowedBook[];
   handleSearch?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   loading: boolean;
+  getBorrowedBooks: () => void;
 }
 
 const TableBorrowedBooks: React.FC<TableBorrowedBooksProps> = ({
   loading,
   data,
+  getBorrowedBooks
 }) => {
 
   const AppContext = useContext<AppContextType>(appContext);
@@ -29,6 +31,8 @@ const TableBorrowedBooks: React.FC<TableBorrowedBooksProps> = ({
 
   const deleteBorrowedBook = async (id: number | string) => {
     await axiosClient.delete(`/api/borrowed-books/delete/${id}`);
+    getBorrowedBooks()
+
   };
 
   const returnAndUpdateBorrowedBook = async (id: number | string, bookId:  number | string ) => {
@@ -37,7 +41,9 @@ const TableBorrowedBooks: React.FC<TableBorrowedBooksProps> = ({
         available: true,
         returnStatus: 'returned'
     }
-    returnBorrowedBook( returnBook, id);
+    await returnBorrowedBook( returnBook, id);
+    getBorrowedBooks()
+
   };
 
   const dateFormatter = (date: Date) => {
@@ -115,26 +121,29 @@ const TableBorrowedBooks: React.FC<TableBorrowedBooksProps> = ({
                     </td>
                     <td>
                       <button
+                      className="table__buttons-return-book"
                           onClick={() => returnAndUpdateBorrowedBook(item.id, item.bookId) }
                           >
                         Devolver libro
                       </button>
                     </td>
 
+                  {/*
                     <td>
                       <Tooltip text="Eliminar reserva">
                         <button
                           className="table__buttons-delete"
                           onClick={() => deleteBorrowedBook(item.id)}
                         >
-                          {" "}
+                 
                           <FontAwesomeIcon
                             icon={faTrash}
-                            className="icon-margin"
+                          
                           />
                         </button>
                       </Tooltip>
                     </td>
+                  */}
                   </tr>
                 ))}
               </tbody>
